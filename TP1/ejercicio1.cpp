@@ -13,8 +13,13 @@ int main(int argc, char* argv[]) {
         std::cout << " > Ingrese el ancho en metros del terreno: "; std::cin >> terreno[0];
         std::cout << " > Ingrese el largo en metros del terreno: "; std::cin >> terreno[1];
     } else {
-        terreno[0] = atoi(argv[1]);
-        terreno[1] = atoi(argv[2]);
+        try {
+            terreno[0] = std::stof(argv[1]);
+            terreno[1] = std::stof(argv[2]);
+        } catch (const std::invalid_argument& exc) {
+            std::cout << " << Error: argumento inválido.\n";
+            return 1;
+        }
     }
 
     valores[0] = costos[0] * (terreno[0] + terreno[1]);
