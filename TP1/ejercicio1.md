@@ -37,6 +37,6 @@
 - Si `valores[0] < valores[1]`, se imprimirá “*por el borde*”.
 - Si `valores[0] > valores[1]`, se imprimirá “*en diagonal*”.
 
-**3.** El programa termina de manera controlada.
+**3.** El programa terminará de manera controlada.
 - El programa ejecutará un `return 0` si todos los datos ingresados son válidos, cumplen con las precondiciones establecidas y los cálculos se realizaron correctamente.
 - El programa ejecutará un `return 1` si hubo algún error en la conversión de argumentos o si los datos ingresados no corresponden a medidas reales.

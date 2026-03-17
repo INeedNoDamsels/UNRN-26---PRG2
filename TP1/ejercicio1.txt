@@ -1,6 +1,0 @@
-El programa está diseñado para brindar una solución directamente desde la línea de comandos, si se proporcionan los argumentos necesarios.
- - Las variables 'argv[1]' y 'argv[2]' corresponden al primer y segundo argumento ingresado por línea de comandos luego del mismo nombre del programa.
-
-Variables de entrada
- - terreno[0] -> indica el ancho del terreno en metros, es una variable de tipo float.
- - terreno[1] -> indica el largo del terreno en metros, es una variable de tipo float.

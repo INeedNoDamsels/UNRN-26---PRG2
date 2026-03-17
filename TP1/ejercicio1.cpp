@@ -12,12 +12,17 @@ int main(int argc, char* argv[]) {
     if (argc != 3) {
         std::cout << " > Ingrese el ancho en metros del terreno: "; std::cin >> terreno[0];
         std::cout << " > Ingrese el largo en metros del terreno: "; std::cin >> terreno[1];
+
+        if (terreno[0] <= 0 || terreno[1] <= 0) {
+            std::cout << " << Error: medidas indicadas inválidas.\n";
+            return 1;
+        }
     } else {
         try {
             terreno[0] = std::stof(argv[1]);
             terreno[1] = std::stof(argv[2]);
         } catch (const std::invalid_argument& exc) {
-            std::cout << " << Error: argumento inválido.\n";
+            std::cout << " << Error: argumentos recibidos invalidos.\n";
             return 1;
         }
     }
@@ -26,7 +31,7 @@ int main(int argc, char* argv[]) {
     valores[1] = costos[1] * sqrt(pow(terreno[0], 2) + pow(terreno[1], 2));
 
     std::cout << " < La opcion mas economica seria cablear ";
-    std::cout << (valores[0] < valores[1] ? "por el borde.\n" : "en diagonal.\n");
+    std::cout << (valores[0] < valores[1] ? "por el borde." : "en diagonal.");
 
     return 0;
 }
