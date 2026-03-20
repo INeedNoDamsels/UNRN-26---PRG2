@@ -25,18 +25,18 @@ float validarIngreso(const std::string mensaje) {
 int main() {
     float H = validarIngreso("la altura (m) del muro");
     float D = validarIngreso("la distancia (m) al muro");
-    float c = validarIngreso("la velocidad (m/s) del objeto");
+    float v = validarIngreso("la velocidad (m/s) del objeto");
     float t = validarIngreso("el angulo (grados) del tiro") * (3.1415 / 180.0f);
 
     // Ecuación de un proyectil
     float resultado = D * tanf(t) - 
-        (9.81f * D * D) /
-        (2 * c * c * cosf(t) * cosf(t));
+        (9.81f * (D * D)) /
+        (2 * (v * v) * (cosf(t) * cosf(t)));
 
     std::cout << "  << El proyectil va a ";
     if (resultado < H) {
         std::cout << "chocar contra";
-    } else if (fabs(resultado - H) < 1e-5) {
+    } else if (resultado = H) {
         std::cout << "rozar";
     } else std::cout << "superar";
     std::cout << " el muro.\n" << std::endl;
