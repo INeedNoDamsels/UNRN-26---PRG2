@@ -1,8 +1,11 @@
 ## 1. El Costo de la Infraestructura
-#### El programa está diseñado para brindar una solución directa si se proporcionan los argumentos necesarios.
->Las variables `argv[1]` y `argv[2]` corresponden al primer y segundo argumento ingresado por línea de comandos, luego del mismo nombre del programa.
+> El programa está diseñado para brindar una solución directa si se proporcionan los argumentos necesarios.
+
+### Variables de entrada (implícitas)
+- `argc`: Indica la cantidad de argumentos ingresados por línea de comandos.
 
 ### Variables de entrada
+- `argv[1]` y `argv[2]` corresponden al primer y segundo argumento ingresado por línea de comandos, luego del mismo nombre del programa.
 - `terreno[0]`: Indica el ancho, en metros, del terreno. Es una variable de tipo float.
 - `terreno[1]`: Indica el largo, en metros, del terreno. Es una variable de tipo float.
 
@@ -19,7 +22,7 @@
 ### Precondiciones
 *Los requisitos previos para la ejecución del programa.*
 
-#### En `validarIngreso()`
+#### En `ingresar()`
 - `valor` ∈ ℝ
 - `valor` > 0
 #### En `main()`

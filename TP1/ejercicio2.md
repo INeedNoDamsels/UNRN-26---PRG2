@@ -13,7 +13,7 @@
 ### Precondiciones
 *Los requisitos previos para la ejecución del programa.*
 
-#### En `validarIngreso()`
+#### En `ingresar()`
 - `valor` ∈ ℝ
 - `valor` > 0
 #### En `main()`
