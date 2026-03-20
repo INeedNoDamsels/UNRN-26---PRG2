@@ -4,8 +4,6 @@
 #include <string>
 
 std::string ingresar(const std::string mensaje) {
-    float valor;
-
     while (true) {
         std::string input;
         std::cout << "\n > Ingrese " << mensaje << ": "; std::cin >> input;
