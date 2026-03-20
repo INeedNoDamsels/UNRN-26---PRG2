@@ -11,8 +11,8 @@ const int MEDIDAS  = 3;   // Medidas de cada pieza
 const int CANTIDAD = 300; // Cantidad de piezas pertenecientes al lote generado.
 
 int main() {
-    bool esValido;
-    float  piezas[CANTIDAD][MEDIDAS];
+    bool valido;
+    float piezas[CANTIDAD][MEDIDAS];
 
     std::random_device semilla;
     std::mt19937 valor(semilla());
@@ -29,22 +29,22 @@ int main() {
         for(int j = 0; j < MEDIDAS; j++) promedio += piezas[i][j];
     }
     promedio /= (CANTIDAD * MEDIDAS);
-    esValido = (promedio >= MIN && promedio <= MAX);
+    valido = (promedio >= MIN && promedio <= MAX);
 
-    // Ciclo que evalúa la desviación de cada pieza del lote
+    // Ciclo que evalúa la desviación de cada pieza del lote, termina al detectar alguna anomalía o analizar todo el lote
     for(int i = 0; i < CANTIDAD; i++) {
         for(int j = 0; j < MEDIDAS; j++) {
             float desviacion = fabs(piezas[i][j] - promedio);
 
             if (desviacion > (0.10 * promedio)) {
-                esValido = false;
+                valido = false;
                 break;
             }
         }
     }
 
     std::cout << "\n < El lote de " << CANTIDAD << " piezas es considerado \"";
-    esValido ? (std::cout << "aceptable") : (std::cout << "no aceptable");
+    valido ? (std::cout << "aceptable") : (std::cout << "no aceptable");
     std::cout << "\".\n" << std::endl;
 
     return 0;
