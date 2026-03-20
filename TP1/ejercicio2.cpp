@@ -4,7 +4,7 @@
 #include <string>
 #include <cmath>
 
-float validarIngreso(const std::string mensaje) {
+float ingresar(const std::string mensaje) {
     float valor;
 
     while (true) {
@@ -23,10 +23,10 @@ float validarIngreso(const std::string mensaje) {
 }
 
 int main() {
-    float H = validarIngreso("la altura (m) del muro");
-    float D = validarIngreso("la distancia (m) al muro");
-    float v = validarIngreso("la velocidad (m/s) del objeto");
-    float t = validarIngreso("el angulo (grados) del tiro") * (3.1415 / 180.0f);
+    float H = ingresar("la altura (m) del muro");
+    float D = ingresar("la distancia (m) al muro");
+    float v = ingresar("la velocidad (m/s) del objeto");
+    float t = ingresar("el angulo (grados) del tiro") * (3.1415 / 180.0f);
 
     // Ecuación de un proyectil
     float resultado = D * tanf(t) - 

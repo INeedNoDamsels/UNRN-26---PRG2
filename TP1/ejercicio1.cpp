@@ -5,7 +5,7 @@
 
 const int costos[2] = {10, 13}; // Elegí cambiar el valor del cableado por diagonal para que sea más variantes los resultados
 
-float validarIngreso(const std::string mensaje) {
+float ingresar(const std::string mensaje) {
     float valor;
 
     while (true) {
@@ -38,8 +38,8 @@ int main(int argc, char* argv[]) {
     }
 
     if (!bandera) {
-        terreno[0] = validarIngreso("ancho");
-        terreno[1] = validarIngreso("largo");
+        terreno[0] = ingresar("ancho");
+        terreno[1] = ingresar("largo");
     }
 
     valores[0] = costos[0] * (terreno[0] + terreno[1]);
