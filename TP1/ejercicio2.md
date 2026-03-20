@@ -1,4 +1,4 @@
-## 1. Trayectoria de Proyectiles
+## 2. Trayectoria de Proyectiles
 ### Variables de entrada
 - `H`: Indica la altura, en metros,  de un muro. Es una variable de tipo float.
 - `D`: Indica la distancia, en metros, del muro en relación al dispositivo que lanza el objeto. Es una variable de tipo float.
