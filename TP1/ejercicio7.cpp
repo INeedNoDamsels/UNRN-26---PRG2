@@ -1,7 +1,10 @@
 // Optimización de Stock
 
 #include <iostream>
+#include <random>
 #include <string>
+#include <thread>
+#include <chrono>
 
 class Producto {
 public:
@@ -37,25 +40,28 @@ float reponerStock(Inventario& inventario, unsigned cantidad, float costo) {
 }
 
 int main() {
-    Producto pan("Pan (1kg)", 12);
-    Producto leche("Leche (1L)", 30);
-    Producto huevo("Maple de huevos", 40);
+    std::random_device semilla;
+    std::mt19937 valor(semilla());
+    std::uniform_int_distribution<int> obtener(5, 40);
 
-    Inventario item1(pan, 10, 5);
-    Inventario item2(leche, 10, 5);
-    Inventario item3(huevo, 10, 5);
+    Producto productos[3] = {
+        Producto("Pan", 9.5f),
+        Producto("Leche", 28.6f),
+        Producto("Huevos", 32.0f)
+    };
 
-    float cFijo = 100.0f;
+    Inventario items[3] = {
+        Inventario(productos[0], obtener(valor), 4),
+        Inventario(productos[1], obtener(valor), 4),
+        Inventario(productos[2], obtener(valor), 4)
+    };
 
-    std::cout << "\nProducto: " << item1.producto.nombre << "\n  Quedan " << item1.cantidad;
-    std::cout << "\nProducto: " << item2.producto.nombre << "\n  Quedan " << item2.cantidad;
-    std::cout << "\nProducto: " << item3.producto.nombre << "\n  Quedan " << item3.cantidad;
-    std::cout << std::endl;
-
-    float costo = reponerStock(item1, 60, cFijo);
-
-    std::cout << "\n > Costo del pedido: $" << costo << std::endl;
-    std::cout << "  >> Nuevo stock: " << item1.cantidad << std::endl;
+    while(true) {
+        for(int i = 0; i < 3; i++) {
+            std::cout << items[i].producto.nombre << ": " << items[i].cantidad << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
 
     return 0;
 }
