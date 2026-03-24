@@ -89,27 +89,27 @@ public:
     void vender() {
     int i = obtener(0, 2);
 
-    if (items[i].cantidad > 0) {
-        int vendidas = obtener(1, items[i].cantidad);
+        if (items[i].cantidad > 0) {
+            int vendidas = obtener(1, items[i].cantidad);
 
-        float precioVenta = items[i].producto.precioUnitario * 1.3f;
-        float ganancia = vendidas * precioVenta;
+            float precioVenta = items[i].producto.precioUnitario * 1.3f;
+            float ganancia = vendidas * precioVenta;
 
-        items[i].cantidad -= vendidas;
+            items[i].cantidad -= vendidas;
 
-        std::cout << " > Vendiste " << vendidas << " de " << items[i].producto.nombre << " | Ganancia: $" << ganancia << std::endl;
+            std::cout << " > Vendiste " << vendidas << " de " << items[i].producto.nombre << " | Ganancia: $" << ganancia << std::endl;
 
-        if (deuda > 0) {
-            if (ganancia >= deuda) {
-                ganancia -= deuda;
-                deuda = 0;
-                saldo += ganancia;
-            } else {
-                deuda -= ganancia;
-            }
-        } else saldo += ganancia;
-    } else std::cout << " < No hay stock para vender." << std::endl;
-}
+            if (deuda > 0) {
+                if (ganancia >= deuda) {
+                    ganancia -= deuda;
+                    deuda = 0;
+                    saldo += ganancia;
+                } else {
+                    deuda -= ganancia;
+                }
+            } else saldo += ganancia;
+        } else std::cout << " < No hay stock de " << items[i].producto.nombre << std::endl;
+    }
 
     void mostrarStock() const {
         std::cout << "[Saldo: $" << saldo << " | Deuda: $" << deuda << "]" << std::endl;
@@ -127,7 +127,7 @@ public:
             }
         }
 
-        std::cout << " < Costo total: $" << total << std::endl;
+        if (total != 0) std::cout << " < Costo total: $" << total << std::endl;
 
         saldo -= total;
 
