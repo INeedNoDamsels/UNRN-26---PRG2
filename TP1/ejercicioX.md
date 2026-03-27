@@ -1,5 +1,4 @@
 # 10. Reserva de Butacas
-
 ### Variables de entrada (implícitas)
 - `mensaje`: Texto que se muestra al usuario al solicitar datos. Es una variable de tipo string.
 
