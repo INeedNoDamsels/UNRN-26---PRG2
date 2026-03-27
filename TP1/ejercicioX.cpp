@@ -23,21 +23,25 @@ int ingresar(const std::string mensaje) {
 
         try {
             int valor = stoi(input);
-            if (valor <= 0 || valor > COLUMNAS) throw std::out_of_range("");
+            if (valor <= 0 || valor > 10) throw std::out_of_range("");
             return valor;
         } catch (std::out_of_range) {
-            for (int i = 0; i < 13 + mensaje.length(); i++) std::cout << " ";
-            std::cout << "^ Aviso: debe ingresar un valor entre 1 y " << COLUMNAS << ".\n";
+            std::cout << std::string(13 + mensaje.length(), ' ');
+            std::cout << "^ Aviso: debe ingresar un valor entre 1 y 10.\n";
         } catch (...) {
-            for (int i = 0; i < 13 + mensaje.length(); i++) std::cout << " ";
+            std::cout << std::string(13 + mensaje.length(), ' ');
             std::cout << "^ Error: ingreso invalido.\n";
         }
     }
 }
 
 void mostrar(int sala[FILAS][COLUMNAS]) {
+    std::cout << "  ";
+    for (int j = 0; j < COLUMNAS; j++) std::cout << " " << (j + 1) % 10 << " ";
+    std::cout << "\n";
+
     for (int i = 0; i < FILAS; i++) {
-        std::cout << i + 1 << ": ";
+        std::cout << i + 1 << " ";
         for (int j = 0; j < COLUMNAS; j++) {
             if (sala[i][j] == 2) {
                 std::cout << "[x]";
