@@ -72,5 +72,4 @@
    - Se informará que no hay butacas disponibles.
    - El programa finalizará.
 
-
 **8.** El programa terminará de manera controlada, ejecutando un `return 0` si todos los datos ingresados son válidos, cumplen con las precondiciones establecidas y los cálculos se realizaron correctamente.
