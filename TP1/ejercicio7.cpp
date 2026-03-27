@@ -25,6 +25,7 @@ int ingresar() {
         }
     }
 }
+
 void lapso(int segundos) {
     for (int i = 0; i < segundos; i++) {
         std::cout << ".";
@@ -32,6 +33,7 @@ void lapso(int segundos) {
     }
     std::cout << std::endl << std::endl;
 }
+
 int obtener(int min, int max) {
     static std::random_device semilla;
     static std::mt19937 valor(semilla());
@@ -47,6 +49,7 @@ public:
 
     Producto(std::string n, float p) : nombre(n), precioUnitario(p) {}
 };
+
 class Inventario {
 public:
     Producto producto;
@@ -78,6 +81,7 @@ public:
         return costo + (cantidad * producto.precioUnitario);
     }
 };
+
 class Negocio {
 public:
     float saldo;
