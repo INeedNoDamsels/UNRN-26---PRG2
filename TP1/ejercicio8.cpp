@@ -1,3 +1,5 @@
+// El Autómata Unidimensional
+
 #include <iostream>
 #include <random>
 #include <thread>
