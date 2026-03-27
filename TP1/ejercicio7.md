@@ -1,5 +1,5 @@
 # 7. Optimización de Stock
-### Variables de entrada (implícitas)
+### Variables de entrada
 - Entrada por teclado mediante la función `ingresar()`: opción de menú elegida por el usuario.
 
 ---
@@ -31,7 +31,7 @@
   - Información de ventas.
   - Costo de pedidos y reposición.
   - Mensajes de atención a clientes o cierre de sesión.
-- `return 0`: indica la finalización correcta del programa.  
+- `return 0`: indica la finalización correcta del programa.
 
 ---
 
