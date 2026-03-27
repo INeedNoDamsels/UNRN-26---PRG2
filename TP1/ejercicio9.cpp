@@ -4,10 +4,10 @@
 #include <random>
 #include <cmath>
 
-struct Dron {
+struct Punto {
     int p_x, p_y;
 
-    Dron(int a, int b) : p_x(a), p_y(b) {}
+    Punto(int a, int b) : p_x(a), p_y(b) {}
 };
 struct Area {
     int x_1, x_2, y_1, y_2;
@@ -19,11 +19,11 @@ struct Area {
         y_2 = std::max(c, d);
     }
 
-    bool tieneA(const Dron& dron) const {
+    bool tieneA(const Punto& dron) const {
         return (dron.p_x >= x_1 && dron.p_x <= x_2) && (dron.p_y >= y_1 && dron.p_y <= y_2);
     }
 
-    void imprimirse(const Dron& dron) const {
+    void imprimirse(const Punto& dron) const {
         int ancho = std::abs(x_2 - x_1) + 1;
         int alto  = std::abs(y_2 - y_1) + 1;
 
@@ -59,17 +59,17 @@ int main() {
     int y2 = y1 + alto;
 
     Area rectangulo(x1, x2, y1, y2);
-    Dron miDroncito(
+    Punto ubicacion(
         obtener(x1 - 2, x2 + 2),
         obtener(y1 - 2, y2 + 2)
     );
 
-    std::cout << "Se ha generado un area de ["
+    std::cout << "\n < Se ha generado un area de ["
               << (x2 - x1 + 1) << " x "
               << (y2 - y1 + 1) << "]:\n";
-    rectangulo.imprimirse(miDroncito);
+    rectangulo.imprimirse(ubicacion);
 
-    std::cout << (rectangulo.tieneA(miDroncito) ? "\n < Dron localizado." : "\n < Alerta! No hay rastro del dron.") << std::endl;
+    std::cout << (rectangulo.tieneA(ubicacion) ? "\n < Dron localizado." : "\n < Alerta! No hay rastro del dron.") << std::endl;
 
     return 0;
 }
