@@ -22,12 +22,12 @@ int main() {
     while (true) {
         for (int i = 0; i < 10; i++) {
             std::cout << "[";
-            fila[i] ? std::cout << "█" : std::cout << " ";
+            fila[i] ? std::cout << "#" : std::cout << " ";
             std::cout << "]";
         }
         
         std::cout << std::endl;
-        lapso(1);
+        lapso(2);
 
         bool nueva[10];
 
