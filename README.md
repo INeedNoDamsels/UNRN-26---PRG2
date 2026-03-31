@@ -33,7 +33,7 @@
 ### 🧩 Guía 2: [Estructuras de datos en C++](https://github.com/INeedNoDamsels/UNRN-26---PRG2/tree/main/TP2)
 
 **Contenido:**
-1. ⏳ Clases Simples
+1. ✅ Clases Simples (ver *[código fuente][2.1.c]*)
 2. ⏳ Clases con Arreglos Estáticos
 3. ⏳ Clases con Memoria Dinámica
 4. ⏳ Problemas de Combinación de Estructuras
@@ -58,3 +58,5 @@
 [1.9.r]: https://github.com/INeedNoDamsels/UNRN-26---PRG2/blob/main/TP1/ejercicio9.md
 [1.0.c]: https://github.com/INeedNoDamsels/UNRN-26---PRG2/blob/main/TP1/ejercicioX.cpp
 [1.0.r]: https://github.com/INeedNoDamsels/UNRN-26---PRG2/blob/main/TP1/ejercicioX.md
+
+[2.1.c]: https://github.com/INeedNoDamsels/UNRN-26---PRG2/blob/main/TP2/ejercicio1.cpp
