@@ -17,12 +17,43 @@ private:
 
 public:
     Contacto() : nombre(""), apellido(""), telefono(""), email("") {}
-    Contacto(const std::string& n, const std::string& a, const std::string& t, const std::string& e) : nombre(n), apellido(a), telefono(t), email(e) {}
+    Contacto(const std::string& n, const std::string& a, const std::string& t = "", const std::string& e = "") {
+        if (n.empty() && a.empty()) {
+            this->nombre = "Nuevo";
+            this->apellido = "contacto";
+        } else {
+            this->nombre = n;
+            this->apellido = a;
+        }
+
+        this->telefono = t;
+        this->email = e;
+    }
+
+    bool setNombreApellido(const std::string& n, const std::string& a) {
+        if (n.empty() && a.empty()) { return false; }
+
+        this->nombre = n;
+        this->apellido = a;
+
+        return true;
+    }
+    void setTelefono(const std::string& t) { this->telefono = t; }
+    void setEmail(const std::string& e) { this->email = e; }
 
     void mostrar() const {
-        std::cout << "\nNombre: " << nombre << (apellido.empty() ? "" : " " + apellido)
-                  << "\n  - Telefono: " << telefono
-                  << "\n  - Email: " << email << std::endl;
+        bool tieneApellido  = !apellido.empty();
+        char segundaInicial = '?';
+
+        if (tieneApellido) {
+            segundaInicial = apellido.at(0);
+        } else if (nombre.length() > 1) {
+            segundaInicial = nombre.at(1);
+        } else { segundaInicial = nombre.at(0);}
+
+        std::cout << "\n(" << nombre.at(0) << segundaInicial << ") "
+                  << "Nombre: " << nombre << (tieneApellido ? " " + apellido : "")
+                  << "\n - Celular: " << telefono << "\n - Correo: " << email << std::endl;
     }
 };
 
