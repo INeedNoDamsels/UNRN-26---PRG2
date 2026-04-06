@@ -51,10 +51,29 @@ public:
 
     std::string mostrarEmail() const { return this->email.empty() ? "*vacio*" : this->email; }
 
-    std::string obtenerInfo() const {
-        return this->nombre + " " + this->apellido + "\n - Celular: " + this->mostrarTelefono() + "\n -  Correo: " + this-> mostrarEmail();
-    }
+    friend std::istream& operator>>(std::istream& is, Contacto& c);
+    friend std::ostream& operator<<(std::ostream& os, const Contacto& c);
 };
+
+std::istream& operator>>(std::istream& is, Contacto& c) {
+    std::string nombre, apellido, telefono, email;
+
+    if (is >> nombre >> apellido >> telefono >> email) {
+        c.setNombreApellido(nombre, apellido);
+        c.setTelefono(telefono);
+        c.setEmail(email);
+    }
+
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const Contacto& c) {
+    os << c.mostrarNombre() << " " << c.mostrarApellido()
+       << "\n - Celular: " << c.mostrarTelefono()
+       << "\n -  Correo: " << c.mostrarEmail();
+
+    return os;
+}
 
 /**
  * Clase que implementa las operaciones de agregar, editar, eliminar y acceder a los contactos.
@@ -70,10 +89,10 @@ private:
 public:
     AgendaDeContactos() : cantidad(0) {}
 
-    bool agregarContacto(const std::string& nombre, const std::string& apellido, const std::string& telefono = "", const std::string& email = "") {
+    bool agregarContacto(const Contacto& c) {
         if (this->cantidad >= MAX) return false;
 
-        contactos[this->cantidad++] = Contacto(nombre, apellido, telefono, email);
+        contactos[this->cantidad++] = c;
 
         return true;
     }
@@ -84,13 +103,12 @@ public:
 
     int mostrarCantidad() const { return this->cantidad; }
 
-    bool editarContacto(int indice, const std::string& nombre, const std::string& apellido, const std::string& telefono = "", const std::string& email = "") {
+    bool editarContacto(int indice, const Contacto& c) {
         if (!esIndiceValido(indice)) return false;
 
-        this->contactos[indice].setTelefono(telefono);
-        this->contactos[indice].setEmail(email);
+        this->contactos[indice] = c;
 
-        return this->contactos[indice].setNombreApellido(nombre, apellido);
+        return true;
     }
 
     bool borrarContacto(int indice) {
@@ -101,19 +119,54 @@ public:
 
         return true;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const AgendaDeContactos& agenda);
 };
+
+std::ostream& operator<<(std::ostream& os, const AgendaDeContactos& agenda) {
+    int cantidad = agenda.mostrarCantidad();
+
+    if (cantidad == 0) {
+        os << "\nNo hay contactos para mostrar." << std::endl;
+
+        return os;
+    }
+
+    for (int i = 0; i < cantidad; i++) {
+        const Contacto* contacto = agenda.obtenerContacto(i);
+
+        if (contacto) { // este choclo es para mostrar la inicial del apellido o el segundo caracter del nombre, o el primero si el nombre tiene un solo caracter, o '?' si ambos estan vacios
+            char segundaInicial = ' ';
+            std::string nombre = contacto->mostrarNombre();
+            std::string apellido = contacto->mostrarApellido();
+
+            if (!apellido.empty()) {
+                segundaInicial = std::toupper(apellido[0]);
+            } else if (nombre.length() > 1) {
+                segundaInicial = nombre[1];
+            } else if (!nombre.empty()) segundaInicial = nombre[0];
+
+            os << "(" << (nombre.empty() ? '?' : nombre[0])
+               << segundaInicial << ": "
+               << i + 1 << ") "
+               << *contacto << std::endl;
+        }
+    }
+
+    os << "\nTotal de contactos: " << cantidad << std::endl;
+
+    return os;
+}
 
 void menu() {
     std::cout << "\n\t Agenda de contactos"
               << "\n\t      <1> Nuevo\n\t<2> Editar <3> Borrar\n\t <4> Abrir mi agenda\n\t      <0> Salir" << std::endl;
 }
 
-std::string ingresarTexto(const std::string& mensaje) {
-    std::string input;
-
-    std::cout << mensaje; std::getline(std::cin, input);
-
-    return input;
+void mostrarMensaje(bool exito, const std::string& mensajeExito, const std::string& mensajeError) {
+    if (exito) {
+        std::cout << "\n" << mensajeExito << std::endl;
+    } else std::cout << "\n" << mensajeError << std::endl;
 }
 
 int ingresarValor(const std::string& mensaje, int min = 0, int max = 4) {
@@ -139,92 +192,65 @@ int ingresarValor(const std::string& mensaje, int min = 0, int max = 4) {
 }
 
 int main() {
+    int cantidad;
     bool continuar = true;
+    Contacto miContacto;
     AgendaDeContactos agenda;
 
     while (continuar) {
         menu();
+        cantidad = agenda.mostrarCantidad();
 
         int opcion = ingresarValor("\n > Seleccione operacion: ", 0, 4);
 
         switch (opcion) {
-        case 0:
-            continuar = false;
-            break;
-
-        // Agregar un nuevo contacto a la agenda
-        case 1: {
-            std::string n = ingresarTexto("  < Ingrese nombre: ");
-            std::string a = ingresarTexto("  < Ingrese apellido: ");
-            std::string t = ingresarTexto("  < Ingrese telefono: ");
-            std::string e = ingresarTexto("  < Ingrese email: ");
-
-            if (agenda.agregarContacto(n, a, t, e)) {
-                std::cout << "\nContacto agregado correctamente." << std::endl;
-            } else std::cout << "\nAgenda llena." << std::endl;
-            break;
-        }
-
-        // Editar un contacto existente en la agenda
-        case 2: {
-            if (agenda.mostrarCantidad() == 0) {
-                std::cout << "\nNo hay contactos para editar." << std::endl;
-            } else {
-                int id = ingresarValor(" > Ingrese el ID del contacto a editar: ", 1, agenda.mostrarCantidad()) - 1;
-                std::string n = ingresarTexto("  < Ingrese nombre: ");
-                std::string a = ingresarTexto("  < Ingrese apellido: ");
-                std::string t = ingresarTexto("  < Ingrese telefono: ");
-                std::string e = ingresarTexto("  < Ingrese email: ");
-
-                if (agenda.editarContacto(id, n, a, t, e)) {
-                    std::cout << "\nContacto editado correctamente." << std::endl;
-                } else std::cout << "\nContacto no encontrado." << std::endl;
+            case 0: {
+                continuar = false;
+                break;
             }
-            break;
-        }
 
-        // Borrar un contacto existente en la agenda
-        case 3: {
-            if (agenda.mostrarCantidad() == 0) {
-                std::cout << "\nNo hay contactos para borrar." << std::endl;
-            } else {
-                int id = ingresarValor(" > Ingrese el ID del contacto a borrar: ", 1, agenda.mostrarCantidad()) - 1;
+            // Agregar un nuevo contacto a la agenda, ahora utilizando operadores de entrada sobrecargados
+            case 1: {
+                std::cout << "  < Ingrese datos del nuevo contacto: "; std::cin >> miContacto;
 
-                if (agenda.borrarContacto(id)) {
-                    std::cout << "\nContacto borrado correctamente." << std::endl;
-                } else std::cout << "\nContacto no encontrado." << std::endl;
+                mostrarMensaje(agenda.agregarContacto(miContacto), "Contacto agregado correctamente.", "Agenda llena.");
+                break;
             }
-            break;
-        }
 
-        // Mostrar la lista de contactos en la agenda
-        case 4: {
-            if (agenda.mostrarCantidad() == 0) {
-                std::cout << "\nNo hay contactos para mostrar." << std::endl;
-            } else {
-                for (int i = 0; i < agenda.mostrarCantidad(); i++) {
-                    const Contacto* miContacto = agenda.obtenerContacto(i);
+            // Editar un contacto existente en la agenda, ahora utilizando operadores de entrada sobrecargados
+            case 2: {
+                if (cantidad == 0) {
+                    std::cout << "\nNo hay contactos para editar." << std::endl;
+                } else {
+                    int id = ingresarValor(" > Ingrese el ID del contacto a editar: ", 1, cantidad) - 1;
 
-                    if (miContacto) {
-                        char segundaInicial = ' ';
-                        std::string nombre = miContacto->mostrarNombre();
-                        std::string apellido = miContacto->mostrarApellido();
+                    std::cout << "  < Ingrese nuevos datos para el contacto [" << id + 1 << "]: "; std::cin >> miContacto;
 
-                        if (!apellido.empty()) segundaInicial = std::toupper(apellido[0]);
-                        else if (nombre.length() > 1) segundaInicial = nombre[1];
-                        else if (!nombre.empty()) segundaInicial = nombre[0];
-
-                        std::cout << "(" << (nombre.empty() ? '?' : nombre[0]) << segundaInicial << ": "
-                                << i + 1 << ") " << miContacto->obtenerInfo() << std::endl;
-                    }
+                    mostrarMensaje(agenda.editarContacto(id, miContacto), "Contacto editado correctamente.", "Contacto no encontrado.");
                 }
-                std::cout << "\nTotal de contactos: " << agenda.mostrarCantidad() << std::endl;
+                break;
             }
-        break;
-        }
 
-        default:
-            break;
+            // Borrar un contacto existente en la agenda
+            case 3: {
+                if (cantidad == 0) {
+                    std::cout << "\nNo hay contactos para borrar." << std::endl;
+                } else {
+                    int id = ingresarValor(" > Ingrese el ID del contacto a borrar: ", 1, cantidad) - 1;
+
+                    mostrarMensaje(agenda.borrarContacto(id), "Contacto borrado correctamente.", "Contacto no encontrado.");
+                }
+                break;
+            }
+
+            // Mostrar la lista de contactos en la agenda
+            case 4: {
+                std::cout << agenda;
+                break;
+            }
+
+            default:
+                break;
         }
     }
 
