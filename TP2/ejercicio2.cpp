@@ -1,11 +1,12 @@
+// 2. Clases con Arreglos Estáticos
+
 #include <iostream>
 #include <string>
-#include <limits>
+#include <algorithm>
 #include <cctype>
+#include <limits>
 
-/**
- * Clase que contiene los datos de un contacto y permite editarlos.
- */
+// ===== CONTACTO =========================================
 class Contacto {
 private:
     std::string nombre;
@@ -17,43 +18,68 @@ private:
         return !(n.empty() && a.empty());
     }
 
+    bool esTelefonoValido(const std::string& t) const {
+        if (t.empty()) return true;
+
+        int i = 0;
+
+        if (t[0] == '+') i = 1;
+
+        for (; i < (int)t.size(); i++) if (!std::isdigit(t[i]) && t[i] != ' ') return false;
+
+        return true;
+    }
+
 public:
     Contacto() : nombre(""), apellido(""), telefono(""), email("") {}
-    Contacto(const std::string& n, const std::string& a, const std::string& t = "", const std::string& e = "") {
-        if (esNombreApellidoValido(n, a)) {
-            this->nombre = n;
-            this->apellido = a;
-        } else {
-            this->nombre = "Nuevo";
-            this->apellido = "contacto";
-        }
 
-        this->telefono = t;
-        this->email = e;
+    Contacto(const std::string& n, const std::string& a, const std::string& t = "", const std::string& e = "") {
+        if (!esNombreApellidoValido(n, a)) throw std::invalid_argument("Nombre y apellido invalidos");
+        if (!esTelefonoValido(t)) throw std::invalid_argument("Telefono invalido");
+
+        nombre   = n;
+        apellido = a;
+        telefono = t;
+        email    = e;
     }
 
     bool setNombreApellido(const std::string& n, const std::string& a) {
         if (!esNombreApellidoValido(n, a)) return false;
 
-        this->nombre = n;
-        this->apellido = a;
+        nombre   = n;
+        apellido = a;
 
         return true;
     }
-    void setTelefono(const std::string& t) { this->telefono = t; }
-    void setEmail(const std::string& e) { this->email = e; }
 
-    std::string mostrarNombre() const { return this->nombre; }
+    bool setTelefono(const std::string& t) {
+        if (!esTelefonoValido(t)) return false;
 
-    std::string mostrarApellido() const { return this-> apellido; }
+        telefono = t;
 
-    std::string mostrarTelefono() const { return this->telefono.empty() ? "*vacio*" : this->telefono; }
+        return true;
+    }
 
-    std::string mostrarEmail() const { return this->email.empty() ? "*vacio*" : this->email; }
+    void setEmail(const std::string& e) { email = e; }
 
-    friend std::istream& operator>>(std::istream& is, Contacto& c);
+    std::string mostrarNombre()   const { return nombre; }
+    std::string mostrarApellido() const { return apellido; }
+    std::string mostrarTelefono() const { return telefono; }
+    std::string mostrarEmail()    const { return email; }
+
+    bool mismoContacto(const Contacto& otro) const {
+        return nombre == otro.nombre && apellido == otro.apellido;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Contacto& c);
+    friend std::istream& operator>>(std::istream& is, Contacto& c);
 };
+
+std::ostream& operator<<(std::ostream& os, const Contacto& c) {
+    os << c.nombre << ";" << c.apellido << ";" << c.telefono << ";" << c.email;
+
+    return os;
+}
 
 std::istream& operator>>(std::istream& is, Contacto& c) {
     int index = 0;
@@ -89,47 +115,51 @@ std::istream& operator>>(std::istream& is, Contacto& c) {
     return is;
 }
 
-
-std::ostream& operator<<(std::ostream& os, const Contacto& c) {
-    os << c.mostrarNombre() << " " << c.mostrarApellido()
-       << "\n - Celular: " << c.mostrarTelefono()
-       << "\n -  Correo: " << c.mostrarEmail();
-
-    return os;
-}
-
-/**
- * Clase que implementa las operaciones de agregar, editar, eliminar y acceder a los contactos.
- */
+// ===== AGENDA ===========================================
 class AgendaDeContactos {
 private:
-    int cantidad;
-    static const int MAX = 9;
+    static const int MAX = 99;
     Contacto contactos[MAX];
+    int cantidad;
 
-    bool esIndiceValido(int indice) const { return indice >= 0 && indice < this->cantidad; }
+    bool esIndiceValido(int i) const { return i >= 0 && i < cantidad; }
+
+    int buscar(const Contacto& c) const {
+        for (int i = 0; i < cantidad; i++) {
+            if (contactos[i].mismoContacto(c)) return i;
+        }
+
+        return -1;
+    }
+
+    static bool comparar(const Contacto& a, const Contacto& b) {
+        if (a.mostrarApellido() == b.mostrarApellido()) return a.mostrarNombre() < b.mostrarNombre();
+
+        return a.mostrarApellido() < b.mostrarApellido();
+    }
 
 public:
     AgendaDeContactos() : cantidad(0) {}
 
-    bool agregarContacto(const Contacto& c) {
-        if (this->cantidad >= MAX) return false;
+    bool actualizar(const Contacto& c) {
+        int pos = buscar(c);
 
-        contactos[this->cantidad++] = c;
+        if (pos != -1) {
+            contactos[pos] = c;
+            return true;
+        }
+
+        if (cantidad >= MAX) return false;
+
+        contactos[cantidad++] = c;
 
         return true;
     }
 
-    const Contacto* obtenerContacto(int indice) const {
-        return esIndiceValido(indice) ? &this->contactos[indice] : nullptr;
-    }
-
-    int mostrarCantidad() const { return this->cantidad; }
-
     bool editarContacto(int indice, const Contacto& c) {
         if (!esIndiceValido(indice)) return false;
 
-        this->contactos[indice] = c;
+        contactos[indice] = c;
 
         return true;
     }
@@ -137,53 +167,73 @@ public:
     bool borrarContacto(int indice) {
         if (!esIndiceValido(indice)) return false;
 
-        for (int i = indice; i < this->cantidad - 1; i++) this->contactos[i] = this->contactos[i + 1];
-        this->cantidad--;
+        for (int i = indice; i < cantidad - 1; i++) contactos[i] = contactos[i + 1];
+
+        cantidad--;
 
         return true;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const AgendaDeContactos& agenda);
+    const Contacto* obtenerContacto(int indice) const {
+        return esIndiceValido(indice) ? &contactos[indice] : nullptr;
+    }
+
+    int mostrarCantidad() const { return cantidad; }
+
+    friend std::ostream& operator<<(std::ostream& os, AgendaDeContactos a);
+    friend std::istream& operator>>(std::istream& is, AgendaDeContactos& a);
+    friend void mostrarAgendaVisual(const AgendaDeContactos& a);
 };
 
-std::ostream& operator<<(std::ostream& os, const AgendaDeContactos& agenda) {
-    int cantidad = agenda.mostrarCantidad();
+std::ostream& operator<<(std::ostream& os, AgendaDeContactos a) {
+    std::sort(a.contactos, a.contactos + a.cantidad, AgendaDeContactos::comparar);
 
-    if (cantidad == 0) {
-        os << "\nNo hay contactos para mostrar." << std::endl;
-
-        return os;
-    }
-
-    for (int i = 0; i < cantidad; i++) {
-        const Contacto* contacto = agenda.obtenerContacto(i);
-
-        if (contacto) { // simula un apodo con iniciales variables
-            char segundaInicial = ' ';
-            std::string nombre = contacto->mostrarNombre();
-            std::string apellido = contacto->mostrarApellido();
-
-            if (!apellido.empty()) {
-                segundaInicial = std::toupper(apellido[0]);
-            } else if (nombre.length() > 1) {
-                segundaInicial = nombre[1];
-            } else if (!nombre.empty()) segundaInicial = nombre[0];
-
-            os << "(" << (nombre.empty() ? '?' : nombre[0])
-               << segundaInicial << ": "
-               << i + 1 << ") "
-               << *contacto << std::endl;
-        }
-    }
-
-    os << "\nTotal de contactos: " << cantidad << std::endl;
+    for (int i = 0; i < a.cantidad; i++) os << a.contactos[i] << "\n";
 
     return os;
 }
 
+std::istream& operator>>(std::istream& is, AgendaDeContactos& a) {
+    Contacto c;
+
+    while (is >> c) {
+        a.actualizar(c);
+    }
+
+    return is;
+}
+
+// ===== UTILS ============================================
 void menu() {
     std::cout << "\n\t Agenda de contactos"
               << "\n\t      <1> Nuevo\n\t<2> Editar <3> Borrar\n\t <4> Abrir mi agenda\n\t      <0> Salir" << std::endl;
+}
+
+void mostrarAgendaVisual(const AgendaDeContactos& a) {
+    AgendaDeContactos copia = a;
+
+    for (int i = 0; i < copia.mostrarCantidad(); i++) {
+        const Contacto* contacto = copia.obtenerContacto(i);
+
+        char segundaInicial = ' ';
+        std::string nombre   = contacto->mostrarNombre();
+        std::string apellido = contacto->mostrarApellido();
+        std::string telefono = contacto->mostrarTelefono();
+        std::string email    = contacto->mostrarEmail();
+
+        if (!apellido.empty()) {
+            segundaInicial = std::toupper(static_cast<unsigned char>(apellido[0]))
+        } else if (nombre.length() > 1) {
+            segundaInicial = nombre[1];
+        } else if (!nombre.empty()) segundaInicial = nombre[0];
+
+        std::cout << "(" << (nombre.empty() ? '?' : nombre[0])
+                  << segundaInicial << ": "
+                  << i + 1 << ") "
+                  << nombre << " " << apellido
+                  << "\n - Celular: " << telefono
+                  << "\n -  Correo: " << email << std::endl;
+    }
 }
 
 void mostrarMensaje(bool exito, const std::string& mensajeExito, const std::string& mensajeError) {
@@ -214,6 +264,7 @@ int ingresarValor(const std::string& mensaje, int min = 0, int max = 4) {
     }
 }
 
+// ===== PROGRAMA PPAL ====================================
 int main() {
     int cantidad;
     bool continuar = true;
@@ -241,7 +292,7 @@ int main() {
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
                     std::cout << "\nNombre y apellido no pueden estar vacios." << std::endl;
-                } else mostrarMensaje(agenda.agregarContacto(miContacto), "Contacto agregado correctamente.", "Agenda llena.");
+                } else mostrarMensaje(agenda.actualizar(miContacto), "Contacto agregado correctamente.", "Agenda llena.");
                 break;
             }
 
@@ -253,7 +304,7 @@ int main() {
                     int id = ingresarValor(" > Ingrese el ID del contacto a editar: ", 1, cantidad) - 1;
 
                     std::cout << "  < Ingrese nuevos datos para el contacto [" << id + 1 << "]: ";
-                    
+
                     if (!(std::cin >> miContacto)) {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -278,7 +329,7 @@ int main() {
 
             // Mostrar la lista de contactos en la agenda
             case 4: {
-                std::cout << agenda;
+                mostrarAgendaVisual(agenda);
                 break;
             }
 
