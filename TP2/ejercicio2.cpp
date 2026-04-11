@@ -56,16 +56,39 @@ public:
 };
 
 std::istream& operator>>(std::istream& is, Contacto& c) {
-    std::string nombre, apellido, telefono, email;
+    int index = 0;
+    size_t pos = 0;
+    std::string linea;
 
-    if (is >> nombre >> apellido >> telefono >> email) {
-        c.setNombreApellido(nombre, apellido);
-        c.setTelefono(telefono);
-        c.setEmail(email);
+    std::string campos[4] = {
+        "", // [0] nombre
+        "", // [1] apellido
+        "", // [2] telefono
+        "" //  [3] email
+    };
+
+    std::getline(is >> std::ws, linea);
+
+    // separar por ';'
+    while ((pos = linea.find(';')) != std::string::npos && index < 3) {
+        campos[index++] = linea.substr(0, pos);
+        linea.erase(0, pos + 1);
     }
+
+    if (index < 4) campos[index++] = linea;
+
+    if (campos[0].empty() && campos[1].empty()) {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+
+    c.setNombreApellido(campos[0], campos[1]);
+    c.setTelefono(campos[2]);
+    c.setEmail(campos[3]);
 
     return is;
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Contacto& c) {
     os << c.mostrarNombre() << " " << c.mostrarApellido()
@@ -135,7 +158,7 @@ std::ostream& operator<<(std::ostream& os, const AgendaDeContactos& agenda) {
     for (int i = 0; i < cantidad; i++) {
         const Contacto* contacto = agenda.obtenerContacto(i);
 
-        if (contacto) { // este choclo es para mostrar la inicial del apellido o el segundo caracter del nombre, o el primero si el nombre tiene un solo caracter, o '?' si ambos estan vacios
+        if (contacto) { // simula un apodo con iniciales variables
             char segundaInicial = ' ';
             std::string nombre = contacto->mostrarNombre();
             std::string apellido = contacto->mostrarApellido();
@@ -211,9 +234,14 @@ int main() {
 
             // Agregar un nuevo contacto a la agenda, ahora utilizando operadores de entrada sobrecargados
             case 1: {
-                std::cout << "  < Ingrese datos del nuevo contacto: "; std::cin >> miContacto;
+                std::cout << "  < Ingrese datos del nuevo contacto (';' para separar): ";
 
-                mostrarMensaje(agenda.agregarContacto(miContacto), "Contacto agregado correctamente.", "Agenda llena.");
+                if (!(std::cin >> miContacto)) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                    std::cout << "\nNombre y apellido no pueden estar vacios." << std::endl;
+                } else mostrarMensaje(agenda.agregarContacto(miContacto), "Contacto agregado correctamente.", "Agenda llena.");
                 break;
             }
 
@@ -224,9 +252,14 @@ int main() {
                 } else {
                     int id = ingresarValor(" > Ingrese el ID del contacto a editar: ", 1, cantidad) - 1;
 
-                    std::cout << "  < Ingrese nuevos datos para el contacto [" << id + 1 << "]: "; std::cin >> miContacto;
+                    std::cout << "  < Ingrese nuevos datos para el contacto [" << id + 1 << "]: ";
+                    
+                    if (!(std::cin >> miContacto)) {
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-                    mostrarMensaje(agenda.editarContacto(id, miContacto), "Contacto editado correctamente.", "Contacto no encontrado.");
+                        std::cout << "\nNombre y apellido no pueden estar vacios." << std::endl;
+                    } else mostrarMensaje(agenda.editarContacto(id, miContacto), "Contacto editado correctamente.", "Contacto no encontrado.");
                 }
                 break;
             }
