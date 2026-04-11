@@ -27,7 +27,7 @@
 | # | Estado | Ejercicio propuesto | Enlaces |
 |--:|:------:|---------------------|:-------:|
 | 1 | ✅ | Clases Simples | [código fuente][2.1.c] |
-| 2 | ⏳ | Clases con Arreglos Estáticos | [código fuente][2.2.c] |
+| 2 | ✅ | Clases con Arreglos Estáticos | [código fuente][2.2.c] |
 | 3 | ⏳ | Clases con Memoria Dinámica | - |
 | 4 | ⏳ | Problemas de Combinación de Estructuras | - |
 
