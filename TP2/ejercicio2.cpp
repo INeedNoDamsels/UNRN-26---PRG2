@@ -210,10 +210,9 @@ void menu() {
 }
 
 void mostrarAgendaVisual(const AgendaDeContactos& a) {
-    AgendaDeContactos copia = a;
 
-    for (int i = 0; i < copia.mostrarCantidad(); i++) {
-        const Contacto* contacto = copia.obtenerContacto(i);
+    for (int i = 0; i < a.mostrarCantidad(); i++) {
+        const Contacto* contacto = a.obtenerContacto(i);
 
         char segundaInicial = ' ';
         std::string nombre   = contacto->mostrarNombre();
@@ -222,12 +221,12 @@ void mostrarAgendaVisual(const AgendaDeContactos& a) {
         std::string email    = contacto->mostrarEmail();
 
         if (!apellido.empty()) {
-            segundaInicial = std::toupper(static_cast<unsigned char>(apellido[0]))
+            segundaInicial = std::toupper(static_cast<unsigned char>(apellido[0]));
         } else if (nombre.length() > 1) {
             segundaInicial = nombre[1];
         } else if (!nombre.empty()) segundaInicial = nombre[0];
 
-        std::cout << "(" << (nombre.empty() ? '?' : nombre[0])
+        std::cout << "\n(" << (nombre.empty() ? '?' : nombre[0])
                   << segundaInicial << ": "
                   << i + 1 << ") "
                   << nombre << " " << apellido
