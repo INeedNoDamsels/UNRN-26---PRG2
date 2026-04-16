@@ -29,15 +29,6 @@ public:
         }
     }
 
-    bool insertarAlComienzo(int valor) {
-        Nodo* nuevo = new Nodo(valor);
-
-        nuevo->siguiente = cabeza;
-        cabeza = nuevo;
-
-        return true;
-    }
-
     /**
      * @brief Devuelve un vector con los elementos de la lista en orden. Se recorre la lista desde la cabeza hasta el final, agregando cada dato al vector. Si la lista está vacía, se devuelve un vector vacío.
      * Mi reversión del método 'mostrar' solicitado que separa la lógica de la presentación, me parece es más "limpio".
@@ -54,23 +45,6 @@ public:
         }
 
         return elementos;
-    }
-
-    bool insertarAlFinal(int valor) {
-        Nodo* nuevo = new Nodo(valor);
-
-        if (cabeza == nullptr) {
-            cabeza = nuevo;
-            return true;
-        }
-
-        Nodo* actual = cabeza;
-
-        while (actual->siguiente != nullptr) actual = actual->siguiente;
-
-        actual->siguiente = nuevo;
-
-        return true;
     }
 
     bool insertarOrdenado(int valor) {
@@ -124,8 +98,23 @@ public:
 
 // ===== UTILS ============================================
 void menu() {
-    std::cout << "\n\t     Lista Simple Enlazada\n"
-              << "\n\t<1> Mostrar todos los elementos\n<2> Insertar al principio <3> Insertar al final\n\t  <4> Borrar elemento <0> Salir" << std::endl;
+    std::cout << "\n     Lista Simple Enlazada\n"
+              << "\n<1> Mostrar todos los elementos\n     <2> Insertar elemento\n      <3> Borrar elemento\n\t   <0> Salir\n" << std::endl;
+}
+
+bool ingresoValido(const std::string& cadena) {
+    if (cadena.empty()) return false;
+
+    int i = 0;
+
+    if (cadena[0] == '-') {
+        if (cadena.length() == 1) return false;
+        i = 1;
+    }
+
+    for (; i < cadena.length(); i++) if (!std::isdigit(cadena[i])) return false;
+
+    return true;
 }
 
 int ingresarValor(const std::string& mensaje, int min, int max) {
@@ -137,24 +126,25 @@ int ingresarValor(const std::string& mensaje, int min, int max) {
         std::cout << mensaje; std::cin >> input;
 
         try {
+            if (!ingresoValido(input)) throw std::invalid_argument("valor no entero.");
+
             valor = std::stoi(input);
-            if (valor < min || valor > max) throw std::invalid_argument("");
+
+            if (valor < min || valor > max) throw std::invalid_argument("valor fuera de rango.");
 
             return valor;
-        } catch (...) {
-            for (int i = 1; i < mensaje.length(); i++) std::cout << " ";
-            std::cout << "^ Aviso: opcion invalida." << std::endl;
 
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        } catch (const std::exception& exc) {
+            for (int i = 0; i < mensaje.length(); i++) std::cout << " ";
+            std::cout << "^ Aviso: " << exc.what() << std::endl;
         }
     }
 }
 
 void mostrarMensaje(bool exito, const std::string& mensajeExito, const std::string& mensajeError) {
     if (exito) {
-        std::cout << "\n" << mensajeExito << std::endl;
-    } else std::cout << "\n" << mensajeError << std::endl;
+        std::cout << mensajeExito << std::endl;
+    } else std::cout << mensajeError << std::endl;
 }
 
 // ===== PROGRAMA PRINCIPAL ===============================
@@ -165,7 +155,7 @@ int main() {
     while (continuar) {
         menu();
 
-        int opcion = ingresarValor("\n > Seleccione operacion: ", 0, 4);
+        int opcion = ingresarValor(" > Seleccione operacion: ", 0, 4);
 
         switch (opcion) {
             case 0: {
@@ -187,20 +177,14 @@ int main() {
             }
 
             case 2: {
-                int valor = ingresarValor(" > Ingrese valor a insertar al principio: ", std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-                mostrarMensaje(lista.insertarAlComienzo(valor), " < Valor insertado exitosamente.", " < Error al insertar valor.");
+                int valor = ingresarValor(" > Ingrese valor entero a insertar: ", std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+                mostrarMensaje(lista.insertarOrdenado(valor), " < Valor insertado exitosamente.", " < Error al intentar insertar.");
                 break;
             }
 
             case 3: {
-                int valor = ingresarValor(" > Ingrese valor a insertar al final: ", std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-                mostrarMensaje(lista.insertarAlFinal(valor), " < Valor insertado exitosamente.", " < Error al insertar valor.");
-                break;
-            }
-
-            case 4: {
                 int valor = ingresarValor(" > Ingrese valor a borrar: ", std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-                mostrarMensaje(lista.borrarElemento(valor), " < Valor borrado exitosamente.", " < Error al borrar valor.");
+                mostrarMensaje(lista.borrarElemento(valor), " < Valor borrado exitosamente.", " < Error al intentar borrar.");
                 break;
             }
 
